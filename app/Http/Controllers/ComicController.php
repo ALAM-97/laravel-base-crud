@@ -7,6 +7,14 @@ use App\Comic;
 
 class ComicController extends Controller
 {
+    protected $validationRules = [
+        'title' => 'required | max:150 | min: 1',
+        'series' => 'required | max:100 | min: 1',
+        'description' => 'required',
+        'price' => 'required | max:255 | min:1 | integer',
+        'image' => 'nullable | url'
+    ];
+
     /**
      * Display a listing of the resource.
      *
@@ -36,16 +44,21 @@ class ComicController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
-    {
+    {   
+        //validazione
+        $request->validate($this->validationRules);
+
         $data = $request->all();
 
-        $newComic = new Comic;
-        $newComic->title = $data['title'];
-        $newComic->series = $data['series'];
-        $newComic->description = $data['description'];
-        $newComic->price = $data['price'];
-        $newComic->image = $data['image'];
-        $newComic->save();
+        // $newComic = new Comic;
+        // $newComic->title = $data['title'];
+        // $newComic->series = $data['series'];
+        // $newComic->description = $data['description'];
+        // $newComic->price = $data['price'];
+        // $newComic->image = $data['image'];
+        // $newComic->save();
+
+        $newComic = Comic::create($data);
 
         return redirect()->route('comics.show', $newComic->id);
     }
@@ -56,10 +69,8 @@ class ComicController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show(Comic $comic)
     {
-        $comic = Comic::find($id);
-
         return view('comics.show', compact('comic'));
     }
 
@@ -69,9 +80,9 @@ class ComicController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function edit(Comic $comic)
     {
-        //
+        return view('comics.edit', compact('comic'));
     }
 
     /**
@@ -81,9 +92,16 @@ class ComicController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, Comic $comic)
     {
-        //
+        //validazione
+        $request->validate($this->validationRules);
+
+        $data = $request->all();
+
+        $comic->update($data);
+
+        return redirect()->route('comics.show', $comic->id);
     }
 
     /**
@@ -92,8 +110,10 @@ class ComicController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Comic $comic)
     {
-        //
+        $comic->delete();
+
+        return redirect()->route('comics.index');
     }
 }

@@ -7,7 +7,6 @@
             </button>
             <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
                 <div class="navbar-nav">
-                    <a class="nav-link" aria-current="page" href="#">Home</a>
                     <a class="nav-link" href="{{route("comics.index")}}">All Comics</a>
                     <a class="nav-link" href="{{route("comics.create")}}">Add Comic</a>
                     
